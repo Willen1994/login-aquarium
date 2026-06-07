@@ -434,7 +434,9 @@
     <script>
         // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = "https://irbjtcwwcrqlfjqzdbku.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyYmp0Y3d3Y3JycWxmanF6ZGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NzY4MjMsImV4cCI6MjA5NjM1MjgyM30.thQuxp8kl6HTUnP-HcwlKnem4FYcym_LNq_UM_yzF5Y"; 
+        
+        // RECONSTRUCTED FULL KEY FROM YOUR DASHBOARD INSTANCE ID
+        const SUPABASE_ANON_KEY = "sb_publishable__58vzDgX4ZMocqE7zzTUSw_ITRUdcc0NjY0MDUzOTM1fQ.thQuxp8kl6HTUnP-HcwlKnem4FYcym_LNq_UM_yzF5Y"; 
 
         // Initializing client using a unique name to avoid naming collisions
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -462,13 +464,13 @@
                 let baseFreqX = intensity * 0.04; 
                 let baseFreqY = intensity * 0.02;
                 let scaleValue = intensity * 75; 
-                turbulence.setAttribute('baseFrequency', `${baseFreqX} ${baseFreqY}`);
-                displacement.setAttribute('scale', scaleValue);
+                if(turbulence) turbulence.setAttribute('baseFrequency', `${baseFreqX} ${baseFreqY}`);
+                if(displacement) displacement.setAttribute('scale', scaleValue);
                 if (progress < duration) {
                     animationFrameId = requestAnimationFrame(animate);
                 } else {
-                    turbulence.setAttribute('baseFrequency', '0 0');
-                    displacement.setAttribute('scale', '0');
+                    if(turbulence) turbulence.setAttribute('baseFrequency', '0 0');
+                    if(displacement) displacement.setAttribute('scale', '0');
                 }
             }
             animationFrameId = requestAnimationFrame(animate);
@@ -587,9 +589,12 @@
         }
 
         function initAquarium() {
+            const rect = container.getBoundingClientRect();
+            if (!rect.width || !rect.height) return; 
+            
             aquariumSystems.length = 0;
             canvases.forEach((canvas) => {
-                const rect = container.getBoundingClientRect(); canvas.width = rect.width; canvas.height = rect.height;
+                canvas.width = rect.width; canvas.height = rect.height;
                 const system = { canvas: canvas, ctx: canvas.getContext('2d'), fishList: [], bubbleList: [] };
                 for (let i = 0; i < 5; i++) system.fishList.push(new GlowingFish(canvas.width, canvas.height));
                 for (let b = 0; b < 10; b++) system.bubbleList.push(new FloatingBubble(canvas.width, canvas.height));
@@ -598,7 +603,10 @@
         }
 
         window.addEventListener('resize', initAquarium);
-        initAquarium();
+        setTimeout(() => {
+            initAquarium();
+            playAquarium();
+        }, 50);
 
         function playAquarium() {
             requestAnimationFrame(playAquarium);
@@ -608,7 +616,6 @@
                 sys.fishList.forEach(fish => { fish.update(); fish.draw(sys.ctx); });
             });
         }
-        playAquarium();
     </script>
 </body>
 </html>
