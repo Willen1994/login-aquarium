@@ -432,17 +432,19 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-               // --- SUPABASE CONFIGURATION ---
-        const SUPABASE_URL = "https://irbjtcwwcrqlfjqzdbku.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyYmp0Y3d3Y3JycWxmanF6ZGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NzY4MjMsImV4cCI6MjA5NjM1MjgyM30.thQuxp8kl6HTUnP-HcwlKnem4FYcym_LNq_UM_yzF5Y"; // PASTE YOUR KEY HERE
+            // --- SUPABASE CONFIGURATION ---
+    if (typeof supabase === 'undefined') {
+        alert("CRITICAL ERROR: Supabase library did not load! Check your internet or CDN link.");
+    } else {
+        console.log("Supabase library loaded successfully.");
+    }
 
-        // Initializing with specific auth settings to prevent status: 0 blocks
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: {
-                persistSession: false,
-                autoRefreshToken: false
-            }
-        });
+    const SUPABASE_URL = "https://irbjtcwwcrqlfjqzdbku.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyYmp0Y3d3Y3JycWxmanF6ZGt1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NzY4MjMsImV4cCI6MjA5NjM1MjgyM30.thQuxp8kl6HTUnP-HcwlKnem4FYcym_LNq_UM_yzF5Y";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false }
+    });
 
         // --- ANIMATIONS & FORM HANDLING ---
         const container = document.getElementById('container');
