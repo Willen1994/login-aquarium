@@ -487,24 +487,33 @@
         frontOverlay.addEventListener('click', () => { switchToSignUp(); });
         backOverlay.addEventListener('click', () => { switchToLogin(); });
 
-        // --- AUTH SUBMISSIONS ---
-        // --- Look for this section in your code ---
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+         // --- AUTH SUBMISSIONS ---
+        
+        // SIGN UP FORM
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            // ... (your existing const variables) ...
+            const username = document.getElementById('signupUser').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPass').value;
+
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    // ...
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: { data: { display_name: username } }
                 });
+
                 if (error) throw error;
-                alert("Login successful!");
+                alert("Sign up complete! Welcome aboard.");
+                document.getElementById('signupForm').reset();
+                switchToLogin(); 
             } catch (err) {
-                // --- REPLACE YOUR EXISTING CATCH BLOCK WITH THIS: ---
                 console.error("Auth Error:", err);
                 alert("Error details: " + err.message); 
             }
         });
 
+        // LOGIN FORM
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -520,7 +529,7 @@
                 alert("Login successful!");
             } catch (err) {
                 console.error("Auth Error:", err);
-                alert("Login error: " + (err.message || "Failed to reach server. Check your connection."));
+                alert("Error details: " + err.message); 
             }
         });
 
