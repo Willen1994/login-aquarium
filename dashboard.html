@@ -57,10 +57,25 @@
             document.getElementById('user-initial').innerText = name.charAt(0).toUpperCase();
         }
 
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            await supabase.auth.signOut();
-            window.location.href = 'auth.html';
-        });
+        // UPDATED LOGOUT FUNCTION
+document.getElementById('logout-btn').addEventListener('click', async () => {
+    try {
+        // 1. Disable the button while processing to prevent double-clicks
+        const btn = document.getElementById('logout-btn');
+        btn.innerText = "Logging out...";
+        btn.disabled = true;
+
+        // 2. Perform the sign out
+        await supabase.auth.signOut();
+
+        // 3. Force a hard refresh to clear session before redirect
+        window.location.href = 'auth.html';
+        
+    } catch (err) {
+        console.error("Logout error:", err);
+        alert("Logout failed. Please try again.");
+    }
+});
 
         loadDashboard();
     </script>
