@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Loading...</title>
+    <title>Aquarium Portal</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <p>Checking login status...</p>
+    <p>Loading... If it takes too long, <a href="auth.html">click here to enter.</a></p>
 
     <script>
-        // REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS
         const SUPABASE_URL = "https://irbjtcwwcrrqlfjqzdku.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0";
         
@@ -16,20 +15,19 @@
 
         async function checkAuth() {
             try {
-                const { data: { session }, error } = await supabase.auth.getSession();
-                
-                if (error) throw error;
+                // If the script hangs, this timer forces a redirect after 3 seconds
+                const timer = setTimeout(() => { window.location.href = 'auth.html'; }, 3000);
+
+                const { data: { session } } = await supabase.auth.getSession();
+                clearTimeout(timer); // Stop the timer if Supabase responds
 
                 if (session) {
-                    console.log("User logged in, redirecting to dashboard");
-                    window.location.href = 'dashboard.html'; 
+                    window.location.href = 'dashboard.html';
                 } else {
-                    console.log("No session, redirecting to auth");
                     window.location.href = 'auth.html';
                 }
             } catch (err) {
-                console.error("Critical Error:", err);
-                document.body.innerHTML = "<h1>Error loading site. Check console.</h1>";
+                window.location.href = 'auth.html';
             }
         }
         checkAuth();
