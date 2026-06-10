@@ -1,52 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome | My App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body class="bg-gray-50 text-gray-900 font-sans">
-    
-    <nav class="p-6 flex justify-between items-center bg-white shadow-sm">
-        <h1 class="text-xl font-bold">MyApp</h1>
-        <button id="logout-btn" class="text-sm bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors hover:bg-gray-300">Logout</button>
-    </nav>
-
-    <main class="max-w-4xl mx-auto mt-20 p-6 text-center">
-        <h1 class="text-5xl font-extrabold mb-4">Welcome <span id="user-display" class="text-blue-600 italic">...</span>!</h1>
-        <p class="text-xl text-gray-600">You are successfully login.</p>
-    </main>
-
     <script>
-        // --- YOUR SUPABASE CONFIGURATION ---
-        const SUPABASE_URL = "https://irbjtcwwcrrqlfjqzdku.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0"; 
+        const supabase = supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
         
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function checkUser() {
-            const { data: { user }, error } = await supabase.auth.getUser();
-            
-            if (error || !user) {
-                // If no user found, redirect to your auth page
+        async function guard() {
+            const { data: { session } } = await supabase.auth.getSession();
+            // If no session exists, send them to auth.html immediately
+            if (!session) {
                 window.location.href = 'auth.html';
             } else {
-                // Accessing the display_name we saved in user_metadata
-                const name = user.user_metadata.display_name || user.email;
-                document.getElementById('user-display').innerText = name;
+                // If they are logged in, stay on index.html (or redirect to a dashboard)
+                window.location.href = 'dashboard.html'; 
             }
         }
-
-        // Logout functionality
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            await supabase.auth.signOut();
-            window.location.href = 'auth.html';
-        });
-
-        // Run check on load
-        checkUser();
+        guard();
     </script>
+</head>
+<body>
+    <p>Loading...</p>
 </body>
 </html>
