@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Aquarium Portal</title>
+    <title>Loading...</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <p>Loading...</p>
     <script>
-        const SUPABASE_URL = "https://irbjtcwwcrrqlfjqzdku.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = supabase.createClient('https://irbjtcwwcrrqlfjqzdku.supabase.co', 'sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0');
 
         async function checkAuth() {
+            // Failsafe: If no response in 3 seconds, send to auth
+            const timer = setTimeout(() => window.location.href = 'auth.html', 3000);
             const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                window.location.href = 'dashboard.html';
-            } else {
-                window.location.href = 'auth.html';
-            }
+            clearTimeout(timer);
+            
+            if (session) window.location.href = 'dashboard.html';
+            else window.location.href = 'auth.html';
         }
         checkAuth();
     </script>
