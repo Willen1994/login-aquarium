@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { 
+            background: radial-gradient(circle at 50% 50%, #050e1a 0%, #030812 100%); 
+            color: white; 
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-6">
+
+    <div id="dashboard" class="glass-card max-w-sm w-full p-8 rounded-3xl text-center">
+        <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center text-4xl font-bold shadow-lg shadow-blue-500/30">
+            <span id="user-initial">?</span>
+        </div>
+        
+        <h1 class="text-3xl font-bold mb-2">Welcome Back!</h1>
+        <p id="user-name" class="text-gray-400 mb-6"></p>
+        
+        <button id="logout-btn" class="w-full py-3 bg-white text-black hover:bg-gray-200 transition-all rounded-full font-bold">
+            Logout
+        </button>
+    </div>
+
+    <script>
+        const supabase = supabase.createClient(
+            'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
+            'sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0'
+        );
+
+        async function loadDashboard() {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (!user) {
+                // If not logged in, force to login page
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Display name from metadata or email
+            const name = user.user_metadata.display_name || user.email;
+            document.getElementById('user-name').innerText = user.email;
+            document.getElementById('user-initial').innerText = name.charAt(0).toUpperCase();
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'auth.html';
+        });
+
+        loadDashboard();
+    </script>
+</body>
+</html>
