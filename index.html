@@ -609,6 +609,31 @@
             });
         }
 
+        // Add this function at the bottom of your existing <script>
+async function handleAuthRedirect() {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const token = hashParams.get('access_token');
+
+    if (token) {
+        // Supabase often uses the hash fragment for tokens
+        const { data, error } = await supabaseClient.auth.setSession({
+            access_token: hashParams.get('access_token'),
+            refresh_token: hashParams.get('refresh_token'),
+        });
+
+        if (error) {
+            alert("Error verifying account: " + error.message);
+        } else {
+            alert("Successfully verified! Redirecting...");
+            // Redirect user to home/dashboard
+            window.location.href = "/";
+        }
+    }
+}
+
+// Run this when the page loads
+window.addEventListener('load', handleAuthRedirect);
+
     </script>
 </body>
 </html>
