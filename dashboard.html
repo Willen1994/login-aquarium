@@ -9,23 +9,11 @@
     <button id="logout-btn">Logout</button>
 
     <script>
-        const SUPABASE_URL = "https://irbjtcwwcrrqlfjqzdku.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = supabase.createClient('https://irbjtcwwcrrqlfjqzdku.supabase.co', 'sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0');
 
         document.getElementById('logout-btn').addEventListener('click', async () => {
-            const btn = document.getElementById('logout-btn');
-            btn.innerText = "Signing out...";
-            btn.disabled = true;
-
-            try {
-                await supabase.auth.signOut();
-                window.location.href = 'auth.html';
-            } catch (err) {
-                alert("Error logging out.");
-                btn.innerText = "Logout";
-                btn.disabled = false;
-            }
+            await supabase.auth.signOut();
+            window.location.href = 'auth.html';
         });
     </script>
 </body>
