@@ -1,42 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Redirecting...</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <p>Loading...</p>
-
     <script>
-        // Use your actual Project URL and Key here
-        const SUPABASE_URL = "https://irbjtcwwcrrqlfjqzdku.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0";
-        
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = supabase.createClient(
+            'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
+            'sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0'
+        );
 
-        async function init() {
-            try {
-                const { data: { session }, error } = await supabase.auth.getSession();
-                
-                if (error) throw error;
-
-                if (!session) {
-                    // Not logged in, go to auth
-                    window.location.replace('auth.html');
-                } else {
-                    // Logged in, go to dashboard
-                    window.location.replace('index.html'); // Ensure this is your dashboard file
-                }
-            } catch (err) {
-                console.error("Redirect error:", err);
-                // FALLBACK: If Supabase fails, force to auth so the user isn't stuck
-                window.location.replace('auth.html');
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                // User IS logged in, go to the dashboard
+                window.location.href = 'dashboard.html'; 
+            } else {
+                // User is NOT logged in, go to your login page
+                window.location.href = 'auth.html';
             }
         }
-
-        // Run immediately
-        init();
+        checkAuth();
     </script>
 </body>
 </html>
