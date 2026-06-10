@@ -513,7 +513,7 @@
             }
         });
 
-        // LOGIN FORM
+                // LOGIN FORM
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -526,12 +526,17 @@
                 });
 
                 if (error) throw error;
-                alert("Login successful!");
+                
+                // --- ADD THIS LINE ---
+                window.location.href = 'dashboard.html'; 
+                // ---------------------
             } catch (err) {
                 console.error("Auth Error:", err);
                 alert("Error details: " + err.message); 
             }
         });
+
+        
 
         // --- AQUARIUM CANVAS LAYERS (Unchanged) ---
         const canvases = document.querySelectorAll('.aquarium-canvas');
