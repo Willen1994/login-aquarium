@@ -1,24 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Loading...</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <p>Checking login status...</p>
+
     <script>
-        const supabase = supabase.createClient(
-            'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
-            'sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0'
-        );
+        // REPLACE THESE WITH YOUR ACTUAL SUPABASE KEYS
+        const SUPABASE_URL = "https://irbjtcwwcrrqlfjqzdku.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable__5BvzDgX4ZMocqE7zzTUSw_ITRUdcc0";
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (session) {
-                // User IS logged in, go to the dashboard
-                window.location.href = 'dashboard.html'; 
-            } else {
-                // User is NOT logged in, go to your login page
-                window.location.href = 'auth.html';
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) throw error;
+
+                if (session) {
+                    console.log("User logged in, redirecting to dashboard");
+                    window.location.href = 'dashboard.html'; 
+                } else {
+                    console.log("No session, redirecting to auth");
+                    window.location.href = 'auth.html';
+                }
+            } catch (err) {
+                console.error("Critical Error:", err);
+                document.body.innerHTML = "<h1>Error loading site. Check console.</h1>";
             }
         }
         checkAuth();
