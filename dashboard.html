@@ -58,24 +58,29 @@
         }
 
         // UPDATED LOGOUT FUNCTION
+        
 document.getElementById('logout-btn').addEventListener('click', async () => {
     try {
-        // 1. Disable the button while processing to prevent double-clicks
+        // 1. Disable the button to prevent multiple clicks
         const btn = document.getElementById('logout-btn');
-        btn.innerText = "Logging out...";
+        btn.innerText = "Signing out...";
         btn.disabled = true;
 
-        // 2. Perform the sign out
+        // 2. Await the sign-out process
         await supabase.auth.signOut();
 
-        // 3. Force a hard refresh to clear session before redirect
+        // 3. Force redirection to the auth page
         window.location.href = 'auth.html';
         
     } catch (err) {
         console.error("Logout error:", err);
-        alert("Logout failed. Please try again.");
+        alert("An error occurred during logout. Please try again.");
+        // Re-enable button if logout fails
+        document.getElementById('logout-btn').innerText = "Logout";
+        document.getElementById('logout-btn').disabled = false;
     }
 });
+
 
         loadDashboard();
     </script>
