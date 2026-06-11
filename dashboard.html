@@ -17,14 +17,15 @@
             font-size: 30px; 
             padding: 10px 15px; 
             cursor: pointer;
-            /* Force this button to be on top of absolutely everything */
             position: relative;
             z-index: 999999;
+            /* Ensures no touch delay on mobile */
+            touch-action: manipulation;
         }
         
         #logoutMenu { 
             display: none; 
-            position: fixed; /* Fixed to the viewport */
+            position: fixed; 
             right: 20px; 
             top: 80px; 
             background: #fff; 
@@ -60,16 +61,26 @@
         const btn = document.getElementById('hamburger');
         const menu = document.getElementById('logoutMenu');
 
-        btn.addEventListener('click', function(e) {
+        // Combined touch and click toggle
+        function toggleMenu(e) {
+            e.preventDefault();
             e.stopPropagation();
             menu.classList.toggle('show');
+        }
+
+        btn.addEventListener('click', toggleMenu);
+        btn.addEventListener('touchstart', toggleMenu);
+
+        // Close when clicking/tapping elsewhere
+        document.addEventListener('click', () => menu.classList.remove('show'));
+        document.addEventListener('touchstart', (e) => {
+            if (e.target !== btn && e.target !== menu) {
+                menu.classList.remove('show');
+            }
         });
 
-        document.addEventListener('click', function() {
-            menu.classList.remove('show');
-        });
-
-        menu.addEventListener('click', async function() {
+        // Logout
+        menu.addEventListener('click', async () => {
             await supabase.auth.signOut();
             window.location.href = "index.html"; 
         });
