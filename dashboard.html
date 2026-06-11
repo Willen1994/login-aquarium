@@ -17,7 +17,7 @@
         }
         .logout-btn { 
             background: #e0e0e0; border: none; padding: 10px 20px;
-            border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%;
+            border-radius: 5px; font-weight: bold; cursor: pointer;
         }
     </style>
 </head>
@@ -34,32 +34,33 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const supabase = supabase.createClient(
-            'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
-            'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
-        );
-
+        // 1. UI Logic (Runs immediately)
         const btn = document.getElementById('hamburger');
         const menu = document.getElementById('logoutMenu');
         const logoutBtn = document.getElementById('logoutBtn');
 
-        // Toggle
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         });
 
-        // Logout
-        logoutBtn.addEventListener('click', async () => {
-            await supabase.auth.signOut();
-            // Use replace() to kill the history state, preventing the flicker
-            window.location.replace("index.html");
-        });
+        // 2. Supabase Logic (Separated)
+        async function runLogout() {
+            try {
+                const supabase = supabase.createClient(
+                    'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
+                    'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
+                );
+                await supabase.auth.signOut();
+                window.location.href = "index.html";
+            } catch (err) {
+                // If Supabase fails, just redirect manually
+                window.location.href = "index.html";
+            }
+        }
 
-        // Close
-        document.addEventListener('click', (e) => {
-            if (e.target !== btn) menu.style.display = 'none';
-        });
+        logoutBtn.addEventListener('click', runLogout);
+        document.addEventListener('click', () => { menu.style.display = 'none'; });
     </script>
 </body>
 </html>
