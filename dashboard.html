@@ -35,10 +35,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Debugging Tool: Alert if any code fails
+        window.onerror = function(message, source, lineno, colno, error) {
+           alert("Code Error: " + message + " at line " + lineno);
+        };
+
         // 1. Correct Initialization
         const supabase = supabase.createClient(
             'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
-            'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
+            'YOUR_SUPABASE_ANON_KEY' // Remember to replace this with your actual public key
         );
 
         async function initDashboard() {
@@ -63,7 +68,6 @@
             } else {
                 menu.style.display = 'block';
             }
-            console.log("Menu toggled");
         }
 
         async function logout() {
@@ -75,13 +79,14 @@
         let timeout;
         function resetTimer() {
             clearTimeout(timeout);
-            timeout = setTimeout(logout, 600000); 
+            timeout = setTimeout(logout, 600000); // 10 minutes
         }
         
         window.onload = window.onmousemove = window.onkeypress = resetTimer;
 
+        // Initialize on load
         initDashboard();
-        resetTimer();
+        resetTimer(); 
     </script>
 </body>
 </html>
