@@ -9,58 +9,31 @@
         body { background: #030812; color: #fff; font-family: 'Poppins', sans-serif; margin: 0; }
         nav { display: flex; justify-content: space-between; padding: 20px; align-items: center; }
         
-        #menu-toggle { display: none; }
-
         .menu-btn { 
-            background: rgba(255,255,255,0.1); 
-            border: 1px solid white; 
-            border-radius: 5px;
-            color: white; 
-            font-size: 30px; 
-            padding: 10px 15px; 
-            cursor: pointer;
-            display: block;
+            background: rgba(255,255,255,0.1); border: 1px solid white; border-radius: 5px;
+            color: white; font-size: 30px; padding: 10px 15px; cursor: pointer;
         }
 
-        #menu-toggle:checked ~ #logoutMenu { display: block; }
-        
         #logoutMenu { 
-            display: none; 
-            position: fixed; 
-            right: 20px; 
-            top: 80px; 
-            background: #fff; 
-            padding: 0; /* Remove padding here */
-            border-radius: 8px; 
-            z-index: 999999; 
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.5); 
+            display: none; position: fixed; right: 20px; top: 80px; 
+            background: #fff; color: #000; border-radius: 8px; z-index: 9999;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.5); padding: 15px 25px;
         }
 
-        #logoutBtn {
-            background: none; 
-            border: none; 
-            color: black; 
-            font-weight: bold; 
-            cursor: pointer; 
-            font-size: 18px; 
-            padding: 20px 40px; /* BIG clickable area */
-            width: 100%;
-            font-family: 'Poppins', sans-serif;
-            display: block;
+        /* The standard link style */
+        .logout-link { 
+            color: #000; text-decoration: none; font-weight: 600; 
+            display: block; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <h2>My Dashboard</h2>
-        <input type="checkbox" id="menu-toggle">
-        <label for="menu-toggle" class="menu-btn">
-            <i class='bx bx-menu'></i>
-        </label>
-        
+        <h2>May Dashboard</h2>
+        <button id="hamburger" class="menu-btn"><i class='bx bx-menu'></i></button>
         <div id="logoutMenu">
-            <button id="logoutBtn">Logout</button>
+            <a id="logoutLink" class="logout-link">Logout</a>
         </div>
     </nav>
 
@@ -71,20 +44,25 @@
             'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
         );
 
-        // We use a small delay to ensure the event is captured
-        document.getElementById('logoutBtn').addEventListener('touchstart', async (e) => {
-            e.preventDefault(); 
+        const btn = document.getElementById('hamburger');
+        const menu = document.getElementById('logoutMenu');
+        const link = document.getElementById('logoutLink');
+
+        // Toggle menu
+        btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            await supabase.auth.signOut();
-            window.location.href = "index.html"; 
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         });
 
-        // Backup click listener
-        document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-            e.preventDefault();
+        // Logout via simple link
+        link.addEventListener('click', async (e) => {
+            e.preventDefault(); // Prevents link default behavior
             await supabase.auth.signOut();
-            window.location.href = "index.html"; 
+            window.location.href = "index.html";
         });
+
+        // Close when clicking anywhere else
+        document.addEventListener('click', () => menu.style.display = 'none');
     </script>
 </body>
 </html>
