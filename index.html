@@ -432,15 +432,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-               // --- SUPABASE CONFIGURATION ---
+        // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = "https://irbjtcwwcrrqlfjqzdku.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg"; // PASTE YOUR KEY HERE
+        const SUPABASE_ANON_KEY = "sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg";
 
-        // Initializing with specific auth settings to prevent status: 0 blocks
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
             auth: {
                 persistSession: true, 
                 autoRefreshToken: true
+            }
+        });
+
+        // --- AUTOMATIC REDIRECT ON CONFIRMATION ---
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                window.location.href = "dashboard.html";
             }
         });
 
@@ -487,9 +493,7 @@
         frontOverlay.addEventListener('click', () => { switchToSignUp(); });
         backOverlay.addEventListener('click', () => { switchToLogin(); });
 
-         // --- AUTH SUBMISSIONS ---
-        
-        // SIGN UP FORM
+        // --- AUTH SUBMISSIONS ---
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('signupUser').value;
@@ -504,7 +508,7 @@
                 });
 
                 if (error) throw error;
-                alert("Sign up complete! Welcome aboard.");
+                alert("Sign up complete! Please check your email to confirm your account.");
                 document.getElementById('signupForm').reset();
                 switchToLogin(); 
             } catch (err) {
@@ -513,32 +517,27 @@
             }
         });
 
-        // LOGIN FORM
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPass').value;
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPass').value;
 
-    try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw error;
+                alert("Login successful! Redirecting...");
+                window.location.href = "dashboard.html"; 
+            } catch (err) {
+                console.error("Auth Error:", err);
+                alert("Login failed: " + err.message);
+            }
         });
 
-        if (error) throw error; // This jumps to the catch block
-
-        alert("Login successful! Redirecting...");
-        // Ensure this file actually exists in your folder!
-        window.location.href = "dashboard.html"; 
-        
-    } catch (err) {
-        console.error("Auth Error:", err);
-        alert("Login failed: " + err.message);
-    }
-});
-
-
-        // --- AQUARIUM CANVAS LAYERS (Unchanged) ---
+        // --- AQUARIUM CANVAS LAYERS ---
         const canvases = document.querySelectorAll('.aquarium-canvas');
         const aquariumSystems = [];
 
@@ -613,7 +612,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
                 sys.fishList.forEach(fish => { fish.update(); fish.draw(sys.ctx); });
             });
         }
-
     </script>
 </body>
 </html>
