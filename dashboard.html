@@ -17,7 +17,7 @@
         }
         .logout-btn { 
             background: #e0e0e0; border: none; padding: 10px 20px;
-            border-radius: 5px; font-weight: bold; cursor: pointer;
+            border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%;
         }
     </style>
 </head>
@@ -34,33 +34,46 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // 1. UI Logic (Runs immediately)
+        const supabase = supabase.createClient(
+            'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
+            'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
+        );
+
         const btn = document.getElementById('hamburger');
         const menu = document.getElementById('logoutMenu');
         const logoutBtn = document.getElementById('logoutBtn');
 
+        // Toggle Menu
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         });
 
-        // 2. Supabase Logic (Separated)
-        async function runLogout() {
+        // Logout Action
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Lock UI to prevent flickering/re-entry
+            document.body.style.opacity = "0.5";
+            document.body.style.pointerEvents = "none";
+            
             try {
-                const supabase = supabase.createClient(
-                    'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
-                    'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
-                );
                 await supabase.auth.signOut();
-                window.location.href = "index.html";
             } catch (err) {
-                // If Supabase fails, just redirect manually
-                window.location.href = "index.html";
+                console.error("Sign out error", err);
             }
-        }
+            
+            // Navigate away immediately
+            window.location.replace("index.html");
+        });
 
-        logoutBtn.addEventListener('click', runLogout);
-        document.addEventListener('click', () => { menu.style.display = 'none'; });
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== btn) {
+                menu.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
