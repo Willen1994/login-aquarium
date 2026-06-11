@@ -7,22 +7,43 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         body { background: #030812; color: #fff; font-family: 'Poppins', sans-serif; margin: 0; }
-        nav { display: flex; justify-content: space-between; padding: 20px; align-items: center; position: relative; }
-        .menu-btn { background: transparent; border: none; color: white; font-size: 35px; cursor: pointer; padding: 10px; z-index: 10; }
-        #logoutMenu { display: none; position: fixed; right: 20px; top: 70px; background: #fff; color: #000; border-radius: 8px; z-index: 999999; box-shadow: 0px 4px 10px rgba(0,0,0,0.5); padding: 20px; }
-        #logoutLink { color: #000; text-decoration: none; font-weight: 600; cursor: pointer; display: block; font-size: 18px; padding: 10px; }
+        nav { display: flex; justify-content: space-between; padding: 20px; align-items: center; }
+        
+        /* The Checkbox Hack: This is invisible and controls the menu state */
+        #nav-toggle { display: none; }
+        
+        /* When #nav-toggle is checked, find #logoutMenu and show it */
+        #nav-toggle:checked ~ #logoutMenu { display: block; }
+
+        .menu-btn { 
+            background: transparent; border: none; color: white; 
+            font-size: 35px; cursor: pointer; padding: 10px;
+        }
+
+        #logoutMenu { 
+            display: none; position: fixed; right: 20px; top: 70px; 
+            background: #fff; color: #000; border-radius: 8px; z-index: 999999;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.5); padding: 20px;
+        }
+
+        /* We use a span instead of a link to avoid browser 'navigation' interference */
+        .logout-action { 
+            color: #000; font-weight: 600; cursor: pointer; 
+            display: block; font-size: 18px; padding: 10px;
+        }
     </style>
 </head>
 <body>
 
     <nav>
         <h2>May Dashboard</h2>
-        <button id="hamburger" class="menu-btn"><i class='bx bx-menu'></i></button>
+        <input type="checkbox" id="nav-toggle">
+        <label for="nav-toggle" class="menu-btn"><i class='bx bx-menu'></i></label>
+        
+        <div id="logoutMenu">
+            <span id="logoutLink" class="logout-action">Logout</span>
+        </div>
     </nav>
-
-    <div id="logoutMenu">
-        <a id="logoutLink">Logout</a>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -31,35 +52,11 @@
             'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
         );
 
-        const btn = document.getElementById('hamburger');
-        const menu = document.getElementById('logoutMenu');
-        const link = document.getElementById('logoutLink');
-
-        // Toggle Function
-        function toggleMenu(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        }
-
-        // Apply listeners for both touch and click
-        btn.addEventListener('touchstart', toggleMenu);
-        btn.addEventListener('click', toggleMenu);
-
-        // Logout Function
-        async function performLogout(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        // Logout logic is the only thing left in JS
+        document.getElementById('logoutLink').onclick = async () => {
             await supabase.auth.signOut();
             window.location.href = "index.html";
-        }
-
-        link.addEventListener('touchstart', performLogout);
-        link.addEventListener('click', performLogout);
-
-        // Close when clicking/touching elsewhere
-        document.addEventListener('touchstart', () => { menu.style.display = 'none'; });
-        document.addEventListener('click', () => { menu.style.display = 'none'; });
+        };
     </script>
 </body>
 </html>
