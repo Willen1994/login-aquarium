@@ -12,8 +12,8 @@
         nav { display: flex; justify-content: space-between; padding: 20px 50px; align-items: center; }
         .menu-icon { font-size: 30px; cursor: pointer; position: relative; }
         
-        /* Dropdown */
-        #logoutMenu { display: none; position: absolute; right: 50px; top: 70px; background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        /* Dropdown - Added z-index to ensure it sits on top */
+        #logoutMenu { display: none; position: absolute; right: 50px; top: 70px; background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; z-index: 1000; }
         #logoutMenu:hover { background: #f0f0f0; }
         
         .main-content { text-align: center; margin-top: 100px; }
@@ -35,32 +35,35 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Initializing with persistSession: true to keep the user logged in across pages
+        // 1. Correct Initialization
         const supabase = supabase.createClient(
             'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
-            'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg',
-            { auth: { persistSession: true } }
+            'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
         );
 
         async function initDashboard() {
             const { data: { session } } = await supabase.auth.getSession();
             
-            // SECURITY: If no session, force back to login
             if (!session) {
                 window.location.href = "index.html";
                 return;
             }
 
-            // Access the metadata directly from the session user object
             const userMetadata = session.user.user_metadata;
             const name = userMetadata.display_name || "Friend"; 
             
             document.getElementById('userName').innerText = name;
         }
 
+        // 2. Updated toggle function
         function toggleMenu() {
             const menu = document.getElementById('logoutMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+            }
+            console.log("Menu toggled");
         }
 
         async function logout() {
@@ -72,15 +75,13 @@
         let timeout;
         function resetTimer() {
             clearTimeout(timeout);
-            timeout = setTimeout(logout, 600000); // 600,000ms = 10 minutes
+            timeout = setTimeout(logout, 600000); 
         }
         
-        // Listen for user activity
         window.onload = window.onmousemove = window.onkeypress = resetTimer;
 
-        // Initialize on load
         initDashboard();
-        resetTimer(); // Start the timer immediately
+        resetTimer();
     </script>
 </body>
 </html>
