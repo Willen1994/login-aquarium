@@ -520,17 +520,16 @@
             const password = document.getElementById('loginPass').value;
 
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+                // Inside your login form submission:
+const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-                if (error) throw error;
-                alert("Login successful!");
-            } catch (err) {
-                console.error("Auth Error:", err);
-                alert("Error details: " + err.message); 
-            }
+if (error) {
+    alert(error.message);
+} else {
+    // VIOLA! Redirect to the dashboard page
+    window.location.href = "dashboard.html";
+}
+
         });
 
         // --- AQUARIUM CANVAS LAYERS (Unchanged) ---
