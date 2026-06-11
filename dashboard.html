@@ -17,9 +17,7 @@
             font-size: 30px; 
             padding: 10px 15px; 
             cursor: pointer;
-            position: relative;
             z-index: 999999;
-            /* Ensures no touch delay on mobile */
             touch-action: manipulation;
         }
         
@@ -53,36 +51,39 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const supabase = supabase.createClient(
-            'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
-            'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
-        );
+        // Wrap everything in DOMContentLoaded to ensure elements exist
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Supabase Logic
+            try {
+                const supabase = supabase.createClient(
+                    'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
+                    'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
+                );
 
-        const btn = document.getElementById('hamburger');
-        const menu = document.getElementById('logoutMenu');
-
-        // Combined touch and click toggle
-        function toggleMenu(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            menu.classList.toggle('show');
-        }
-
-        btn.addEventListener('click', toggleMenu);
-        btn.addEventListener('touchstart', toggleMenu);
-
-        // Close when clicking/tapping elsewhere
-        document.addEventListener('click', () => menu.classList.remove('show'));
-        document.addEventListener('touchstart', (e) => {
-            if (e.target !== btn && e.target !== menu) {
-                menu.classList.remove('show');
+                // Logout function
+                document.getElementById('logoutMenu').addEventListener('click', async () => {
+                    await supabase.auth.signOut();
+                    window.location.href = "index.html"; 
+                });
+            } catch (e) {
+                console.error("Supabase failed to load:", e);
             }
-        });
 
-        // Logout
-        menu.addEventListener('click', async () => {
-            await supabase.auth.signOut();
-            window.location.href = "index.html"; 
+            // Menu Logic (Independent of Supabase)
+            const btn = document.getElementById('hamburger');
+            const menu = document.getElementById('logoutMenu');
+
+            function toggleMenu(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                menu.classList.toggle('show');
+            }
+
+            btn.addEventListener('click', toggleMenu);
+            btn.addEventListener('touchstart', toggleMenu);
+
+            document.addEventListener('click', () => menu.classList.remove('show'));
         });
     </script>
 </body>
