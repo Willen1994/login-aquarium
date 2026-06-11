@@ -432,6 +432,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
+        // Add this at the very top of your script block in index.html
+window.onload = () => {
+    const hash = window.location.hash;
+    if (hash && hash.includes("type=signup")) {
+        alert("Thank you for confirming! You can now log in.");
+        // Clean the URL so the alert doesn't show again on refresh
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+};
+
         const SUPABASE_URL = "https://irbjtcwwcrrqlfjqzdku.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg";
 
