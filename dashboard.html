@@ -13,7 +13,8 @@
         .menu-icon { font-size: 30px; cursor: pointer; position: relative; }
         
         /* Dropdown */
-        #logoutMenu { display: none; position: absolute; right: 50px; top: 70px; background: #fff; color: #000; padding: 10px; border-radius: 8px; cursor: pointer; }
+        #logoutMenu { display: none; position: absolute; right: 50px; top: 70px; background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        #logoutMenu:hover { background: #f0f0f0; }
         
         .main-content { text-align: center; margin-top: 100px; }
     </style>
@@ -34,14 +35,26 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const supabase = supabase.createClient('https://irbjtcwwcrrqlfjqzdku.supabase.co', 'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg);
+        // Initializing with persistSession: true to keep the user logged in across pages
+        const supabase = supabase.createClient(
+            'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
+            'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg',
+            { auth: { persistSession: true } }
+        );
 
         async function initDashboard() {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) { window.location.href = "index.html"; return; }
             
-            // Retrieve the display_name you saved during Signup
-            const name = session.user.user_metadata.display_name || "Friend";
+            // SECURITY: If no session, force back to login
+            if (!session) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Access the metadata directly from the session user object
+            const userMetadata = session.user.user_metadata;
+            const name = userMetadata.display_name || "Friend"; 
+            
             document.getElementById('userName').innerText = name;
         }
 
@@ -61,9 +74,13 @@
             clearTimeout(timeout);
             timeout = setTimeout(logout, 600000); // 600,000ms = 10 minutes
         }
+        
+        // Listen for user activity
         window.onload = window.onmousemove = window.onkeypress = resetTimer;
 
+        // Initialize on load
         initDashboard();
+        resetTimer(); // Start the timer immediately
     </script>
 </body>
 </html>
