@@ -7,8 +7,19 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         body { background: #030812; color: #fff; font-family: 'Poppins', sans-serif; margin: 0; }
-        nav { display: flex; justify-content: space-between; padding: 20px; align-items: center; }
-        .menu-btn { background: transparent; border: none; color: white; font-size: 35px; cursor: pointer; padding: 10px; }
+        nav { display: flex; justify-content: space-between; padding: 20px; align-items: center; position: relative; }
+        
+        /* 1. Hide the real checkbox */
+        #menu-check { display: none; }
+        
+        /* 2. When checked, show the menu */
+        #menu-check:checked ~ #logoutMenu { display: block; }
+
+        .menu-btn { 
+            background: transparent; border: none; color: white; 
+            font-size: 35px; cursor: pointer; padding: 10px;
+            display: block; /* Ensure it behaves like a block element */
+        }
         
         #logoutMenu { 
             display: none; position: fixed; right: 20px; top: 70px; 
@@ -25,7 +36,8 @@
 
     <nav>
         <h2>May Dashboard</h2>
-        <button id="hamburger" class="menu-btn"><i class='bx bx-menu'></i></button>
+        <input type="checkbox" id="menu-check">
+        <label for="menu-check" class="menu-btn"><i class='bx bx-menu'></i></label>
     </nav>
 
     <div id="logoutMenu">
@@ -39,40 +51,10 @@
             'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
         );
 
-        const btn = document.getElementById('hamburger');
-        const menu = document.getElementById('logoutMenu');
-        const logoutBtn = document.getElementById('logoutBtn');
-
-        // Toggle Menu
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
-        });
-
-        // Logout Action
-        logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Lock UI to prevent flickering/re-entry
-            document.body.style.opacity = "0.5";
-            document.body.style.pointerEvents = "none";
-            
-            try {
-                await supabase.auth.signOut();
-            } catch (err) {
-                console.error("Sign out error", err);
-            }
-            
-            // Navigate away immediately
+        // We only need JavaScript for the logout action now
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
             window.location.replace("index.html");
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (e.target !== btn) {
-                menu.style.display = 'none';
-            }
         });
     </script>
 </body>
