@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { background: #030812; color: #fff; font-family: 'Poppins', sans-serif; margin: 0; }
         nav { display: flex; justify-content: space-between; padding: 20px; align-items: center; }
@@ -18,8 +17,7 @@
             font-size: 30px; 
             padding: 10px 15px; 
             cursor: pointer;
-            z-index: 999999;
-            touch-action: manipulation;
+            z-index: 9999;
         }
         
         #logoutMenu { 
@@ -31,12 +29,10 @@
             color: #000; 
             padding: 20px; 
             border-radius: 8px; 
-            cursor: pointer; 
             font-weight: 600; 
-            z-index: 999999; 
+            z-index: 9999; 
             box-shadow: 0px 4px 10px rgba(0,0,0,0.5); 
         }
-        #logoutMenu.show { display: block !important; }
     </style>
 </head>
 <body>
@@ -50,38 +46,32 @@
 
     <div id="logoutMenu">Logout</div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Initialize Supabase globally
         const supabase = supabase.createClient(
             'https://irbjtcwwcrrqlfjqzdku.supabase.co', 
             'sb_publishable_lh0fpbTi1qweqBZXUlztUQ_bRzWkAeg' 
         );
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const btn = document.getElementById('hamburger');
+        // Global handler to catch taps anywhere
+        document.addEventListener('click', function(e) {
             const menu = document.getElementById('logoutMenu');
+            const hamburger = document.getElementById('hamburger');
 
-            // Toggle logic
-            function toggleMenu(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                menu.classList.toggle('show');
+            // If user clicked the button, toggle menu
+            if (e.target.closest('#hamburger')) {
+                menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+            } 
+            // If user clicked the Logout button
+            else if (e.target.id === 'logoutMenu') {
+                supabase.auth.signOut().then(() => {
+                    window.location.href = "index.html";
+                });
             }
-
-            btn.addEventListener('click', toggleMenu);
-            btn.addEventListener('touchstart', toggleMenu);
-            document.addEventListener('click', () => menu.classList.remove('show'));
-
-            // Logout logic
-            menu.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                try {
-                    await supabase.auth.signOut();
-                    window.location.href = "index.html"; 
-                } catch (err) {
-                    alert("Logout failed: " + err.message);
-                }
-            });
+            // Otherwise, close the menu
+            else {
+                menu.style.display = 'none';
+            }
         });
     </script>
 </body>
