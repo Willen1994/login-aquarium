@@ -514,23 +514,28 @@
         });
 
         // LOGIN FORM
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPass').value;
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPass').value;
 
-            try {
-                // Inside your login form submission:
-const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-if (error) {
-    alert(error.message);
-} else {
-    // VIOLA! Redirect to the dashboard page
-    window.location.href = "dashboard.html";
-}
-
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
         });
+
+        if (error) throw error; // This jumps to the catch block
+
+        alert("Login successful! Redirecting...");
+        // Ensure this file actually exists in your folder!
+        window.location.href = "dashboard.html"; 
+        
+    } catch (err) {
+        console.error("Auth Error:", err);
+        alert("Login failed: " + err.message);
+    }
+});
 
         // --- AQUARIUM CANVAS LAYERS (Unchanged) ---
         const canvases = document.querySelectorAll('.aquarium-canvas');
