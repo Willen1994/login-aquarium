@@ -439,8 +439,8 @@
         // Initializing with specific auth settings to prevent status: 0 blocks
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
             auth: {
-                persistSession: false,
-                autoRefreshToken: false
+                persistSession: true, 
+                autoRefreshToken: true
             }
         });
 
